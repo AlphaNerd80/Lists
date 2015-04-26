@@ -13,7 +13,7 @@ class HomePageTest(TestCase):
         self.assertEqual(found.func, home_page)
 
 
-class ListAndItemiModelsTest(TestCase):
+class ListAndItemModelsTest(TestCase):
 
     def test_saving_and_retrieving_items(self):
         list_ = List()
@@ -38,16 +38,17 @@ class ListAndItemiModelsTest(TestCase):
         first_saved_item = saved_items[0]
         second_saved_item = saved_items[1]
         self.assertEqual(first_saved_item.text, 'The first (ever) list item')
-        self.assertEqual(first_saved_item, list_)
+        self.assertEqual(first_saved_item.list, list_)
         self.assertEqual(second_saved_item.text, 'Item the second')
-        self.assertEqual(second_saved_item, list_)
+        self.assertEqual(second_saved_item.list, list_)
 
 
 class ListViewTest(TestCase):
 
     def test_displays_all_items(self):
-        Item.objects.create(text='itemey 1')
-        Item.objects.create(text='itemey 2')
+        list_ = List.objects.create()
+        Item.objects.create(text='itemey 1', list=list_)
+        Item.objects.create(text='itemey 2', list=list_)
 
         response = self.client.get('/lists/the-only-list-in-the-world/')
 
@@ -61,7 +62,7 @@ class ListViewTest(TestCase):
 
 class NewListTest(TestCase):
 
-    def test_savingnn_a_POST_request(self):
+    def test_saving_a_POST_request(self):
         self.client.post(
             '/lists/new',
             data={'item_text': 'A new list item'}
